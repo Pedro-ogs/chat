@@ -15,6 +15,7 @@ public class ChatView extends JFrame{
 
         //JScrollPane scrollPane = new JScrollPane(textAreaChat);
         //mainPanel.add(scrollPane);
+        //teste
 
         btnSend.addActionListener(new ActionListener() {
             @Override
