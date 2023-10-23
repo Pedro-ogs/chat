@@ -6,32 +6,10 @@ import java.net.UnknownHostException;
 public class Socket {
 
     private String ipCliente;
-    private int serverPort;
+    public int serverPort;
 
     public Socket(){
         this.serverPort = 6969;
-    }
-
-    public String reciveMsgChat() throws Exception {
-        try{
-            java.net.ServerSocket tomadaServidor = new java.net.ServerSocket(serverPort);
-            System.out.println("Aguardando conexão");
-            java.net.Socket tomadaCliente = tomadaServidor.accept();
-            System.out.println("Conectado");
-            setIpCliente(String.valueOf(tomadaCliente.getInetAddress()));
-
-            InputStream bufferInput = tomadaCliente.getInputStream();
-
-            byte[] textRecive = new byte[2048];
-
-            bufferInput.read(textRecive);
-            String message = new String(textRecive).trim();
-
-            return message;
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            return "";
-        }
     }
 
     public void sendMsgChat(byte[] menssagem){

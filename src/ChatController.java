@@ -1,15 +1,17 @@
 import javax.swing.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class ChatController {
     private ChatView gui;
     private Socket socket;
-
+    private java.net.ServerSocket tomadaServidor;
+    private java.net.Socket tomadaCliente;
     public ChatController() throws Exception {
         this.socket = new Socket();
-        initServer();
     }
 
-    public void init() {
+    public void init() throws Exception {
         gui = new ChatView(this);
         gui.setTitle("Conversa");
         gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -17,6 +19,7 @@ public class ChatController {
         gui.setLocationRelativeTo(null);
         gui.setContentPane(gui.getMainPanel());
         gui.setVisible(true);
+        initServer();
     }
 
     private void initServer() throws Exception {
@@ -24,12 +27,37 @@ public class ChatController {
             throw new Exception();
         }
 
-        // Crie uma instância do Runnable
-        Runnable runnable = new MyRunnable();
+        tomadaServidor = new java.net.ServerSocket(socket.serverPort);
+        System.out.println("Aguardando conexão");
+        tomadaCliente = tomadaServidor.accept();
+        System.out.println("Conectado");
+        socket.setIpCliente(String.valueOf(tomadaCliente.getInetAddress()));
 
-        // Crie uma instância de Thread e inicie-a com o Runnable
-        Thread thread = new Thread(runnable);
+        // Crie uma instância de Thread e inicie-a
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        byte[] textReceive = new byte[2048];
+
+                        InputStream bufferInput = tomadaCliente.getInputStream();
+                        //Guardando a msg recebida dentro da variavel textRecive
+                        bufferInput.read(textReceive);
+                        String message = new String(textReceive).trim();
+
+                        addMessage(message);
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        };
         thread.start();
+    }
+
+    private void addMessage(String message) {
+        this.gui.adicionarMensagem(message);
     }
 
     public void sendMsg(String minhaMsg){
@@ -41,19 +69,6 @@ public class ChatController {
 
         menssage = minhaMsg.getBytes();
         socket.sendMsgChat(menssage);
-    }
-
-    public class MyRunnable implements Runnable {
-        @Override
-        public void run() {
-            try {
-                System.out.println("Thread esta rodando");
-                String mensagem = socket.reciveMsgChat();
-                gui.adicionarMensagem(mensagem);
-            }catch (Exception e){
-                System.out.println(e.getMessage());
-            }
-        }
     }
 
 }
