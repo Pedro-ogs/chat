@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -8,15 +9,12 @@ public class ChatView extends JFrame{
     private JButton btnSend;
     private JTextField textMsg;
     private JPanel topJPanel;
+    private JPanel chatPanel;
+    private JPanel messagePanel;
     private ChatController controller;
 
     public ChatView(ChatController controller){
         this.controller = controller;
-
-        //JScrollPane scrollPane = new JScrollPane(textAreaChat);
-        //mainPanel.add(scrollPane);
-        //teste
-
         btnSend.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -26,6 +24,10 @@ public class ChatView extends JFrame{
                 textMsg.setText("");
             }
         });
+
+        chatPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        messagePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
     }
 
     public void adicionarMensagem(String mensagem) {
